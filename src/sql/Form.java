@@ -19,7 +19,8 @@ public class Form implements ActionListener {
 
     JTextField lname, lid, lpost, lsalary;
     JRadioButton male, female;
-
+    JComboBox province;
+  
     public Form() {
         JFrame frame = new JFrame("Form");
         JLabel label = new JLabel();
@@ -69,14 +70,11 @@ public class Form implements ActionListener {
         bg.add(male);
         bg.add(female);
         
-        JLabel provience=new JLabel("Provience");
-        provience.setBounds(30,200,60,20);
-        frame.add(provience);
-        String[] proviences={"Select a provience","Provience 1","Provience 2","Provience 3","Provience 4","Provience 5","Provience 6","Provience 7"};
-        JComboBox provienceSelect= new JComboBox(proviences);
-        provienceSelect.setBounds(100,200,150,20);
-        frame.add(provienceSelect);
-                
+        String[] provinces={"Select your province","Province 1","Province 2","Province 3","Province 4","Province 5","Province 6","Province 7"};
+        province=new JComboBox(provinces);
+        province.setBounds(30, 210, 150, 20);
+        frame.add(province);
+
         JButton submit = new JButton("Submit");
         submit.setBounds(30, 250, 200, 20);
         frame.add(submit);
@@ -101,18 +99,28 @@ public class Form implements ActionListener {
         int conID = Integer.parseInt(id);
         String salary = lsalary.getText();
         int conSalary = Integer.parseInt(salary);
+        String genders="";
+        if(male.isSelected()){
+            genders="Male";
+        }else{
+            genders="Female";
+        }
+        String provinces=(String)province.getSelectedItem();
+        
 
 
         try {
             java.sql.Connection con =  DriverManager.getConnection("jdbc:mysql://localhost/java", "root", "");
             System.out.println("Connected");
             Scanner sc = new Scanner(System.in);
-            String qry = "INSERT INTO student (id,name, post, salary) VALUES (?, ?, ?,?)";
+            String qry = "INSERT INTO student (id,name,post,salary,gender,province) VALUES (?,?,?,?,?,?)";
             PreparedStatement pst = con.prepareStatement(qry);
             pst.setInt(1, conID);
             pst.setString(2, name);
             pst.setString(3, post);
             pst.setInt(4, conSalary);
+            pst.setString(5, genders);
+            pst.setString(6,provinces );
             pst.executeUpdate();
 
         } catch (SQLException ex) {
