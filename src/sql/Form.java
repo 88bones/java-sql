@@ -7,7 +7,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Scanner;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
@@ -16,7 +18,7 @@ import javax.swing.JTextField;
 public class Form implements ActionListener {
 
     JTextField lname, lid, lpost, lsalary;
-    JRadioButton lmale, lfemale;
+    JRadioButton male, female;
 
     public Form() {
         JFrame frame = new JFrame("Form");
@@ -57,16 +59,26 @@ public class Form implements ActionListener {
         JLabel gender=new JLabel("Gender");
         gender.setBounds(30,180, 50, 20);
         frame.add(gender);
-        JRadioButton male=new JRadioButton();
-        male.setBounds(80, 180, 10, 20);
+        male=new JRadioButton("male");
+        female=new JRadioButton("female");
+        male.setBounds(90,180,60,20);
+        female.setBounds(150, 180, 90, 20);
         frame.add(male);
-        JLabel rmale=new JLabel("Male");
-        rmale.setBounds(110, 180, 30, 20);
-        frame.add(rmale);
+        frame.add(female);
+        ButtonGroup bg=new ButtonGroup();
+        bg.add(male);
+        bg.add(female);
         
-
+        JLabel provience=new JLabel("Provience");
+        provience.setBounds(30,200,60,20);
+        frame.add(provience);
+        String[] proviences={"Select a provience","Provience 1","Provience 2","Provience 3","Provience 4","Provience 5","Provience 6","Provience 7"};
+        JComboBox provienceSelect= new JComboBox(proviences);
+        provienceSelect.setBounds(100,200,150,20);
+        frame.add(provienceSelect);
+                
         JButton submit = new JButton("Submit");
-        submit.setBounds(80, 210, 80, 20);
+        submit.setBounds(30, 250, 200, 20);
         frame.add(submit);
         submit.addActionListener(this);
 
@@ -89,6 +101,7 @@ public class Form implements ActionListener {
         int conID = Integer.parseInt(id);
         String salary = lsalary.getText();
         int conSalary = Integer.parseInt(salary);
+
 
         try {
             java.sql.Connection con =  DriverManager.getConnection("jdbc:mysql://localhost/java", "root", "");
