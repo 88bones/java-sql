@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
@@ -20,7 +21,7 @@ public class Form implements ActionListener {
     JTextField lname, lid, lpost, lsalary;
     JRadioButton male, female;
     JComboBox province;
-  
+
     public Form() {
         JFrame frame = new JFrame("Form");
         JLabel label = new JLabel();
@@ -56,22 +57,22 @@ public class Form implements ActionListener {
         lsalary = new JTextField();
         lsalary.setBounds(80, 150, 150, 20);
         frame.add(lsalary);
-        
-        JLabel gender=new JLabel("Gender");
-        gender.setBounds(30,180, 50, 20);
+
+        JLabel gender = new JLabel("Gender");
+        gender.setBounds(30, 180, 50, 20);
         frame.add(gender);
-        male=new JRadioButton("male");
-        female=new JRadioButton("female");
-        male.setBounds(90,180,60,20);
+        male = new JRadioButton("male");
+        female = new JRadioButton("female");
+        male.setBounds(90, 180, 60, 20);
         female.setBounds(150, 180, 90, 20);
         frame.add(male);
         frame.add(female);
-        ButtonGroup bg=new ButtonGroup();
+        ButtonGroup bg = new ButtonGroup();
         bg.add(male);
         bg.add(female);
-        
-        String[] provinces={"Select your province","Province 1","Province 2","Province 3","Province 4","Province 5","Province 6","Province 7"};
-        province=new JComboBox(provinces);
+
+        String[] provinces = {"Select your province", "Province 1", "Province 2", "Province 3", "Province 4", "Province 5", "Province 6", "Province 7"};
+        province = new JComboBox(provinces);
         province.setBounds(30, 210, 150, 20);
         frame.add(province);
 
@@ -93,38 +94,49 @@ public class Form implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        int conSalary=0,conID=0;
         String name = lname.getText();
         String post = lpost.getText();
         String id = lid.getText();
-        int conID = Integer.parseInt(id);
-        String salary = lsalary.getText();
-        int conSalary = Integer.parseInt(salary);
-        String genders="";
-        if(male.isSelected()){
-            genders="Male";
-        }else{
-            genders="Female";
+        if (id.equals("")) {
+            JOptionPane.showMessageDialog(null, "Insert salary");
+        } else {
+            conID = Integer.parseInt(id);
         }
-        String provinces=(String)province.getSelectedItem();
-        
+        String salary = lsalary.getText();
+        if (salary.equals("")) {
+            JOptionPane.showMessageDialog(null, "Insert salary");
+        } else {
+            conSalary = Integer.parseInt(salary);
+        }
+        String genders = "";
+        if (male.isSelected()) {
+            genders = "Male";
+        } else {
+            genders = "Female";
+        }
+        String provinces = (String) province.getSelectedItem();
 
+        if (name.equals("") || post.equals("") || provinces.equalsIgnoreCase("Select your province")) {
+            JOptionPane.showMessageDialog(null, "Please insert data properly");
+        } else {
+            try {
+                java.sql.Connection con = DriverManager.getConnection("jdbc:mysql://localhost/java", "root", "");
+                System.out.println("Connected");
+                Scanner sc = new Scanner(System.in);
+                String qry = "INSERT INTO student (id,name,post,salary,gender,province) VALUES (?,?,?,?,?,?)";
+                PreparedStatement pst = con.prepareStatement(qry);
+                pst.setInt(1, conID);
+                pst.setString(2, name);
+                pst.setString(3, post);
+                pst.setInt(4, conSalary);
+                pst.setString(5, genders);
+                pst.setString(6, provinces);
+                pst.executeUpdate();
 
-        try {
-            java.sql.Connection con =  DriverManager.getConnection("jdbc:mysql://localhost/java", "root", "");
-            System.out.println("Connected");
-            Scanner sc = new Scanner(System.in);
-            String qry = "INSERT INTO student (id,name,post,salary,gender,province) VALUES (?,?,?,?,?,?)";
-            PreparedStatement pst = con.prepareStatement(qry);
-            pst.setInt(1, conID);
-            pst.setString(2, name);
-            pst.setString(3, post);
-            pst.setInt(4, conSalary);
-            pst.setString(5, genders);
-            pst.setString(6,provinces );
-            pst.executeUpdate();
-
-        } catch (SQLException ex) {
-            System.out.println("Exception: "+ex.getMessage());
+            } catch (SQLException ex) {
+                System.out.println("Exception: " + ex.getMessage());
+            }
         }
     }
 }
